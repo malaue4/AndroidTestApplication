@@ -1,74 +1,77 @@
-package com.example.marti.smalltestapplication;
+package com.example.marti.smalltestapplication.model;
 
 import android.net.Uri;
-import android.text.format.DateFormat;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.format.DateTimeFormatter;
+import org.threeten.bp.format.DateTimeParseException;
 
 public class Article {
-    public String Title;
-    public String Description;
-    public LocalDate PublishDate;
-    public Uri Link;
-    public NewsFeed Source;
-    public boolean isFavorite;
+    private String title;
+    private String description;
+    private LocalDate publishDate;
+    private Uri link;
+    private NewsFeed newsFeed;
+    private boolean favorite;
     private String author;
     private String category;
     private String content;
 
     public String getTitle() {
-        return Title;
+        return title;
     }
 
     public void setTitle(String title) {
-        Title = title;
+        this.title = title;
     }
 
     public String getDescription() {
-        return Description;
+        return description;
     }
 
     public void setDescription(String description) {
-        Description = description;
+        this.description = description;
     }
 
     public LocalDate getPublishDate() {
-        return PublishDate;
+        return publishDate;
     }
 
     public void setPublishDate(String publishDate) {
-        Date date = new Date(publishDate);
-        setPublishDate(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+        DateTimeFormatter dtf = DateTimeFormatter.RFC_1123_DATE_TIME;
+        try {
+            setPublishDate(LocalDateTime.parse(publishDate, dtf).toLocalDate());
+        } catch (DateTimeParseException e){
+            setPublishDate(LocalDate.now());
+        }
     }
     public void setPublishDate(LocalDate publishDate) {
-        PublishDate = publishDate;
+        this.publishDate = publishDate;
     }
 
     public Uri getLink() {
-        return Link;
+        return link;
     }
 
     public void setLink(Uri link) {
-        Link = link;
+        this.link = link;
     }
 
-    public NewsFeed getSource() {
-        return Source;
+    public NewsFeed getNewsFeed() {
+        return newsFeed;
     }
 
-    public void setSource(NewsFeed source) {
-        Source = source;
+    public void setNewsFeed(NewsFeed newsFeed) {
+        this.newsFeed = newsFeed;
     }
 
     public boolean isFavorite() {
-        return isFavorite;
+        return favorite;
     }
 
     public void setFavorite(boolean favorite) {
-        isFavorite = favorite;
+        this.favorite = favorite;
     }
 
     public void setAuthor(String author) {

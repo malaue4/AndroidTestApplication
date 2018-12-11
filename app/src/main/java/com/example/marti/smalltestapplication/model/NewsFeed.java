@@ -1,4 +1,4 @@
-package com.example.marti.smalltestapplication;
+package com.example.marti.smalltestapplication.model;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-class NewsFeed {
+public class NewsFeed {
     private int Id;
     private String Title;
     private String Description;
