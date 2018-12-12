@@ -76,7 +76,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:gravity="center_horizontal"
-            android:checked="@{article.favorite}"
+            android:checked="@={article.favorite}"
             app:layout_constraintBottom_toTopOf="@+id/itemDescription"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

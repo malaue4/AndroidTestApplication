@@ -1,13 +1,16 @@
 package com.example.marti.smalltestapplication.model;
 
+import android.databinding.BaseObservable;
+import android.databinding.Bindable;
 import android.net.Uri;
 
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.format.DateTimeFormatter;
 import org.threeten.bp.format.DateTimeParseException;
+import com.example.marti.smalltestapplication.BR;
 
-public class Article {
+public class Article extends BaseObservable {
     private String title;
     private String description;
     private LocalDate publishDate;
@@ -66,12 +69,16 @@ public class Article {
         this.newsFeed = newsFeed;
     }
 
+    @Bindable
     public boolean isFavorite() {
         return favorite;
     }
 
     public void setFavorite(boolean favorite) {
-        this.favorite = favorite;
+        if(this.favorite != favorite) {
+            this.favorite = favorite;
+            notifyPropertyChanged(BR.favorite);
+        }
     }
 
     public void setAuthor(String author) {

@@ -2,6 +2,7 @@ package com.example.marti.smalltestapplication.page.news;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
+import android.databinding.Observable;
 import android.databinding.ViewDataBinding;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,6 +12,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.example.marti.smalltestapplication.BR;
@@ -78,29 +81,29 @@ public class NewsFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        mViewModel.getArticles().observe(this, articles -> {
-            setData(recyclerView, articles);
-        });
+        if(filterBy == FilterArticlesBy.Favorites){
+            FilterableSectionAdapter fsa = new FilterableSectionAdapter();
+            mViewModel.getArticles().observe(this, articles -> {
+                fsa.setOriginalData(articles);
+                //setData(recyclerView, articles);
+            });
+            recyclerView.setAdapter(fsa);
+        } else {
+            mViewModel.getArticles().observe(this, articles -> {
+                setData(recyclerView, articles);
+            });
+        }
         return rootView;
     }
 
     private void setData(RecyclerView recyclerView, List<Article> myData) {
         Map<String, List<Article>> datData;
-        if(filterBy == FilterArticlesBy.Favorites){
-            datData = myData.stream().filter(Article::isFavorite)
-                    .sorted(Comparator.comparing(Article::getPublishDate).reversed())
-                    .collect(Collectors.groupingBy(
-                            article -> RelativeTime(getContext(), article.getPublishDate()),
-                            LinkedHashMap::new,
-                            Collectors.toList()));
-        } else {
             datData = myData.stream()
                     .sorted(Comparator.comparing(Article::getPublishDate).reversed())
                     .collect(Collectors.groupingBy(
                             article -> RelativeTime(getContext(), article.getPublishDate()),
                             LinkedHashMap::new,
                             Collectors.toList()));
-        }
 
 
         SectionedRecyclerViewAdapter sectionAdapter = (SectionedRecyclerViewAdapter) recyclerView.getAdapter();
@@ -185,6 +188,68 @@ public class NewsFragment extends Fragment {
             public void bind(Article article){
                 binding.setVariable(BR.article,article);
                 binding.executePendingBindings();
+            }
+        }
+    }
+
+    public class FilterableSectionAdapter extends SectionedRecyclerViewAdapter implements Filterable{
+        public List<Article> getOriginalData() {
+            return originalData;
+        }
+
+        public void setOriginalData(List<Article> originalData) {
+            this.originalData = originalData;
+            for (Article a : originalData){
+                a.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+                    @Override
+                    public void onPropertyChanged(Observable sender, int propertyId) {
+                        getFilter().filter("");
+
+                    }
+                });
+            }
+        }
+
+        private List<Article>originalData = null;
+        private Filter filter = new FavoriteFilter();
+
+        @Override
+        public Filter getFilter() {
+            return filter;
+        }
+
+        private void setData(List<Article> data){
+            Map<String, List<Article>> datData;
+            datData = data.stream()
+                    .sorted(Comparator.comparing(Article::getPublishDate).reversed())
+                    .collect(Collectors.groupingBy(
+                            article -> RelativeTime(getContext(), article.getPublishDate()),
+                            LinkedHashMap::new,
+                            Collectors.toList()));
+
+            removeAllSections();
+            // Add your Sections
+            for (String key :
+                    datData.keySet()) {
+                addSection(new MySection(key, datData.get(key)));
+            }
+        }
+
+        private class FavoriteFilter extends Filter{
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                FilterResults results = new FilterResults();
+
+                final List<Article> list = originalData.stream().filter(Article::isFavorite).collect(Collectors.toList());
+                results.values = list;
+                results.count = list.size();
+                return results;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                setData((List<Article>) results.values);
+                //notifyDataSetChanged();
             }
         }
     }

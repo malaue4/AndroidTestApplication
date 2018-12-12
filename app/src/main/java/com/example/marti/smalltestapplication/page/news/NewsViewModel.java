@@ -3,6 +3,7 @@ package com.example.marti.smalltestapplication.page.news;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.databinding.ObservableArrayList;
 import android.os.AsyncTask;
 
 import com.example.marti.smalltestapplication.RssParser;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -32,6 +34,11 @@ public class NewsViewModel extends ViewModel {
             feeds.add("https://www.xkcd.com/rss.xml");
             feeds.add("http://feeds.feedburner.com/d0od?format=xml");
             new FetchRssTask(this).execute(feeds.toArray(new String[feeds.size()]));
+
+            articles.observeForever(articles1 -> {
+                favorites.clear();
+                favorites.addAll(articles1.stream().filter(article -> article.isFavorite()).collect(Collectors.toList()));
+            });
         }
         return articles;
     }
@@ -49,6 +56,8 @@ public class NewsViewModel extends ViewModel {
         }
         return feedUrls;
     }
+
+    public ObservableArrayList<Article> favorites = new ObservableArrayList<>();
 
 
     private static class FetchRssTask extends AsyncTask<String, Void, List<Article>> {
