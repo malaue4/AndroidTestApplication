@@ -6,6 +6,10 @@
         <variable
             name="article"
             type="com.example.marti.smalltestapplication.model.Article"/>
+
+        <variable
+            name="isExpanded"
+            type="android.databinding.ObservableBoolean" />
     </data>
     <android.support.constraint.ConstraintLayout
         android:layout_height="wrap_content"
@@ -45,6 +49,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxHeight="200dp"
+            android:breakStrategy="balanced"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
@@ -53,20 +58,30 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/itemTitle"
-            android:visibility="visible"/>
+            android:visibility="@{isExpanded.get()?visible:gone}" />
 
         <TextView
             android:id="@+id/itemLink"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
+            android:clickable="true"
+            android:focusable="true"
             android:text="@string/full_article_link"
             android:textColor="@color/colorPrimary"
-            android:clickable="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/itemDescription"
             android:visibility="visible"
-            android:focusable="true" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/itemDescription" />
+
+        <!--<WebView
+            android:id="@+id/webView"
+            android:layout_width="match_parent"
+            android:layout_height="200dip"
+            android:layout_marginTop="8dp"
+            android:data="@{article.description}"
+            app:layout_constraintTop_toBottomOf="@+id/itemTitle">
+
+        </WebView>-->
 
         <Switch
             android:id="@+id/itemFavorite"

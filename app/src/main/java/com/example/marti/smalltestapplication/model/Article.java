@@ -2,7 +2,10 @@ package com.example.marti.smalltestapplication.model;
 
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
+import android.databinding.BindingAdapter;
 import android.net.Uri;
+import android.view.View;
+import android.webkit.WebView;
 
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalDateTime;
@@ -104,6 +107,7 @@ public class Article extends BaseObservable {
     public String getContent() {
         return content;
     }
+
 }
 
 
