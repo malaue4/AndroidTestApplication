@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.view.View;
 import android.webkit.WebView;
 
+import org.threeten.bp.Instant;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.format.DateTimeFormatter;
@@ -45,9 +46,17 @@ public class Article extends BaseObservable {
     }
 
     public void setPublishDate(String publishDate) {
-        DateTimeFormatter dtf = DateTimeFormatter.RFC_1123_DATE_TIME;
         try {
-            setPublishDate(LocalDateTime.parse(publishDate, dtf).toLocalDate());
+            DateTimeFormatter dtf = DateTimeFormatter.RFC_1123_DATE_TIME;
+            String timeZonesAreTheWorst = publishDate.replace("PST", "+0800");
+            timeZonesAreTheWorst = timeZonesAreTheWorst.replace("PDT", "+0700");
+            timeZonesAreTheWorst = timeZonesAreTheWorst.replace("MST", "+0700");
+            timeZonesAreTheWorst = timeZonesAreTheWorst.replace("MDT", "+0600");
+            timeZonesAreTheWorst = timeZonesAreTheWorst.replace("CST", "+0600");
+            timeZonesAreTheWorst = timeZonesAreTheWorst.replace("CDT", "+0500");
+            timeZonesAreTheWorst = timeZonesAreTheWorst.replace("EST", "+0500");
+            timeZonesAreTheWorst = timeZonesAreTheWorst.replace("EDT", "+0400");
+            setPublishDate(LocalDateTime.parse(timeZonesAreTheWorst, dtf).toLocalDate());
         } catch (DateTimeParseException e){
             setPublishDate(LocalDate.now());
         }

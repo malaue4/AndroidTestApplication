@@ -3,6 +3,7 @@ package com.example.marti.smalltestapplication.page.news;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
 import android.databinding.Observable;
+import android.databinding.ObservableBoolean;
 import android.databinding.ViewDataBinding;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -67,7 +68,6 @@ public class NewsFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        //
     }
 
     @Override
@@ -179,14 +179,20 @@ public class NewsFragment extends Fragment {
 
         static class MyItemViewHolder extends RecyclerView.ViewHolder{
             private final ViewDataBinding binding;
+            private final ObservableBoolean expanded;
 
             MyItemViewHolder(ViewDataBinding binding){
                 super(binding.getRoot());
                 this.binding = binding;
+                this.expanded = new ObservableBoolean(false);
+                this.binding.getRoot().setOnClickListener((view) -> {
+                    expanded.set(!expanded.get());
+                });
             }
 
             public void bind(Article article){
                 binding.setVariable(BR.article,article);
+                binding.setVariable(BR.isExpanded,expanded);
                 binding.executePendingBindings();
             }
         }

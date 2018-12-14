@@ -48,8 +48,8 @@ public class Utility {
 
     @BindingAdapter("android:data")
     public static void setData(WebView view, String data) {
-        view.getSettings().setLoadWithOverviewMode(true);
-        view.getSettings().setUseWideViewPort(true);
+        //view.getSettings().setLoadWithOverviewMode(true);
+        //view.getSettings().setUseWideViewPort(true);
         view.loadData(data,
                 "text/html", "UTF-8");
     }
